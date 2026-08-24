@@ -1,0 +1,42 @@
+{
+  "model": "nvidia/nemotron-3-super-120b-a12b:free",
+  "tool_choice": "auto",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a home-cooking assistant helping plan a family dish. Use the provided tools to fetch the recipe, check the pantry, and set timers before answering. Do not invent recipe details you can get from a tool. When you have enough from the tools, give the final plan. Keep a short ledger at the top of every reply: GOAL | DONE | NEXT | OPEN."
+    },
+    {
+      "role": "user",
+      "content": "I want to cook chicken adobo for the family tonight. Walk me through it."
+    },
+
+    {
+      "role": "assistant",
+      "content": null,
+      "tool_calls": [
+        {"id": "call_1_recipe", "type": "function", "function": {"name": "get_recipe", "arguments": "{\"dish\":\"chicken adobo\"}"}}
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_1_recipe",
+      "name": "get_recipe",
+      "content": ">>> YOU FILL THIS IN: paste the get_recipe result here (see result-1.json for a ready-made one) <<<"
+    }
+  ],
+  "tools": [
+    {"type": "function", "function": {
+      "name": "get_recipe",
+      "description": "Return ingredients and steps for a named dish.",
+      "parameters": {"type": "object", "properties": {"dish": {"type": "string"}}, "required": ["dish"]}}},
+    {"type": "function", "function": {
+      "name": "check_pantry",
+      "description": "Check which of the given ingredients are in stock at home.",
+      "parameters": {"type": "object", "properties": {"items": {"type": "array", "items": {"type": "string"}}}, "required": ["items"]}}},
+    {"type": "function", "function": {
+      "name": "set_timer",
+      "description": "Start a kitchen timer.",
+      "parameters": {"type": "object", "properties": {"minutes": {"type": "integer"}, "label": {"type": "string"}}, "required": ["minutes", "label"]}}}
+  ]
+}

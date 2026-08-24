@@ -1,0 +1,47 @@
+THIS is what turn-3.json actually becomes before the model reads it.
+
+The JSON envelope (roles, tool_calls, arguments) is just transport. The API server
+unwraps it and flattens the whole conversation into ONE plain-text stream with
+little role markers — then the model reads that text and predicts the next tokens.
+No hidden state, no memory between calls: everything the model "knows" is the text
+below, rebuilt and resent every single turn.
+
+(Illustrative flattening — the exact marker tokens differ per model, but the shape
+is real: one growing text transcript in, more text out.)
+
+════════════════════════════════════════════════════════════════════════
+<|system|>
+You are a home-cooking assistant helping plan a family dish. Use the provided
+tools to fetch the recipe, check the pantry, and set timers before answering. Do
+not invent recipe details you can get from a tool. When you have enough from the
+tools, give the final plan. Keep a short ledger at the top of every reply:
+GOAL | DONE | NEXT | OPEN.
+
+[tools available: get_recipe(dish) · check_pantry(items[]) · set_timer(minutes,label)]
+
+<|user|>
+I want to cook chicken adobo for the family tonight. Walk me through it.
+
+<|assistant|>
+→ call get_recipe({"dish":"chicken adobo"})
+
+<|tool:get_recipe|>
+{"ingredients":["chicken","soy sauce","vinegar","garlic","bay leaves",
+"black peppercorns","water","cooking oil"],"steps":["Brown the chicken in oil.",
+"Add garlic, soy sauce, vinegar, bay leaves, peppercorns, water.",
+"Simmer 30 min until tender and sauce reduces.","Serve over rice."]}
+
+<|assistant|>
+→ call check_pantry({"items":["chicken","soy sauce","vinegar","garlic",
+"bay leaves","black peppercorns","water","cooking oil"]})
+
+<|tool:check_pantry|>
+{"have":["chicken","soy sauce","garlic","cooking oil","black peppercorns","water"],
+"missing":["vinegar","bay leaves"]}
+
+<|assistant|>
+                          ⟵ the model writes the next tokens from HERE
+════════════════════════════════════════════════════════════════════════
+
+Text in, text out. The "agent" is just: append the new text, send the whole
+thing again, repeat until the model writes an answer instead of another tool call.
