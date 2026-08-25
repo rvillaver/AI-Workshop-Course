@@ -1,0 +1,15 @@
+{
+  "name": "AI Workshop — demos & dev environment",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "secrets": {
+    "OPENROUTER_API_KEY": {
+      "description": "Your own free OpenRouter API key (https://openrouter.ai/keys). Powers the agent demos; each attendee brings their own."
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["anthropic.claude-code"]
+    }
+  }
+}

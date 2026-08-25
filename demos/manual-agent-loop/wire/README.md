@@ -8,10 +8,10 @@ exactly that by hand.
 Run each turn with the sender (auto-reads your key from the repo `.env`):
 
 ```
-../send.sh turn-1.json     # -> writes turn-1.response.json
+node ../send.mjs turn-1.json     # -> writes turn-1.response.json
 # read the reply: the model asks to call get_recipe
-../send.sh turn-2.json     # after you fill in the get_recipe result
-../send.sh turn-3.json     # after you fill in the check_pantry result
+node ../send.mjs turn-2.json     # after you fill in the get_recipe result
+node ../send.mjs turn-3.json     # after you fill in the check_pantry result
 ```
 
 ## The one manual step per turn
@@ -34,7 +34,7 @@ own and watch the model's plan change).
 | `turn-3.json` | Turn 2 (result filled) + the model's `check_pantry` call + **a blank** for its result |
 | `result-1.json` / `result-2.json` | Ready-made tool outputs to paste into the blanks |
 | `model-sees.txt` | The JSON flattened into the single **text** stream the model actually reads |
-| `turn-N.response.json` | The model's reply — created when you run `send.sh` |
+| `turn-N.response.json` | The model's reply — created when you run `send.mjs` |
 
 ## The idea to leave with
 Look at `turn-1 → turn-2 → turn-3` in order. The "agent" is just:
