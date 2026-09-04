@@ -4,8 +4,8 @@
 // Shows how an agent framework actually works: the model REQUESTS tool calls, a
 // runtime EXECUTES them and feeds results back, and the loop repeats until the
 // model stops asking and answers. Here that runtime is you, typing tool results by
-// hand. Node built-ins only (global fetch + readline) — runs in a fresh Codespace,
-// no npm install.
+// hand. Runtime built-ins only (global fetch + readline) — runs under BlitzPi's Bun,
+// no install step.
 //
 // Providers (auto-detected):
 //   * If OPENROUTER_API_KEY is set -> OpenRouter free (base openrouter.ai/api/v1,
@@ -18,8 +18,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-// Load the repo-root .env if present so it "just works" locally. In Codespaces the
-// key arrives as a real env var (the OPENROUTER_API_KEY secret), so this is a no-op.
+// Load the repo-root .env if present so it "just works" locally. If OPENROUTER_API_KEY
+// is already exported in the environment, this is a no-op.
 loadEnv(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '.env'));
 
 const { OPENROUTER_API_KEY, OX_BASE_URL, OX_MODEL, OX_FREE_API_TOKEN } = process.env;
@@ -97,7 +97,7 @@ function loadEnv(path) {
 }
 
 if (!TOKEN) {
-  console.error('No API key found. Set OPENROUTER_API_KEY (a Codespace secret, or in the repo-root .env).');
+  console.error('No API key found. Set OPENROUTER_API_KEY in the environment or the repo-root .env.');
   process.exit(1);
 }
 

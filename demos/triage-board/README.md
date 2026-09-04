@@ -5,9 +5,9 @@ A small internal app for triaging support tickets. Express API, JSON file storag
 ## Run it
 
 ```bash
-npm install
-npm start          # http://localhost:4000
-npm test           # existing suite
+bun install
+bun run start      # http://localhost:4000
+bun test           # existing suite
 ```
 
 State lives in `data.json`, created from `fixtures/seed.json` on first boot. Delete it to start over.

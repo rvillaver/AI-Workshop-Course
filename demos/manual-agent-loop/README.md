@@ -19,13 +19,13 @@ The scripts use OpenRouter automatically when `OPENROUTER_API_KEY` is set, else 
 For the curl path, set the `model` field in the `.request.json` to match your provider.
 
 ## Two ways to run it
-**A. Interactive (recommended for stage):** `node agent_loop.mjs`
+**A. Interactive (recommended for stage):** `bun agent_loop.mjs`
 Prints the outgoing payload each turn (watch the `messages` array grow), shows the
 tool calls the model requests, and prompts you to type each tool result. Loops until
-the model returns a final answer with no tool calls. Node built-ins only — no `npm install`.
+the model returns a final answer with no tool calls. Runtime built-ins only, no install step.
 
 **B. By hand with curl — you are the runtime:** see [`wire/`](wire/README.md).
-A series of `.json` files you POST in order — `node send.mjs wire/turn-1.json`, then
+A series of `.json` files you POST in order — `bun send.mjs wire/turn-1.json`, then
 `turn-2.json`, then `turn-3.json`. Each carries the whole conversation so far **except one
 blank**: the newest tool result, which **you paste in** before sending. `result-1.json` /
 `result-2.json` are ready-made answers; `wire/model-sees.txt` shows the JSON flattened into

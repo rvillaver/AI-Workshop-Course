@@ -1,47 +1,59 @@
-# AI Workshop — Demos & Dev Environment
+# AI Workshop — Demos
 
-A ready-to-use cloud dev environment for the workshop's **runnable demos**. Open it in
-GitHub Codespaces (or clone it) and you get Node 22 plus the agent CLIs preinstalled — so
-you, or an AI coding assistant (GitHub Copilot, Claude Code, Codex), can run the examples
-and drive commands with no local setup.
+The runnable demos for the workshop. Everything runs locally inside **BlitzPi**, which brings its own Bun runtime and
+sandboxes the shell, so there is no cloud environment to wait on and nothing else on your machine gets touched.
 
-> The workshop deck/course material is internal and lives elsewhere. This repo is just the
-> demos and the environment to run them.
+> The workshop deck and course material are internal and live elsewhere. This repo is the demos.
 
-## Quick start (GitHub Codespaces)
+## Setup
 
-1. Get a free **[OpenRouter](https://openrouter.ai/keys)** API key (no card).
-2. Green **Code** button → **Codespaces** → **Create codespace**. It builds in ~1 min and
-   installs the agent CLIs automatically.
-3. Paste your key as the Codespace secret `OPENROUTER_API_KEY`.
-4. Run a demo:
+1. Install BlitzPi. One command, no developer tools required:
 
    ```bash
-   node demos/manual-agent-loop/agent_loop.mjs
+   curl -fsSL https://raw.githubusercontent.com/rvillaver/BlitzPi/master/install.sh | sh
    ```
 
-   Or start the triage board used by the Development track:
+   Windows 11 (PowerShell): `irm https://raw.githubusercontent.com/rvillaver/BlitzPi/master/install.ps1 | iex`
+
+2. Get a free **[OpenRouter](https://openrouter.ai/keys)** API key (no card) and put
+   `OPENROUTER_API_KEY=sk-or-...` in a repo-root `.env` (see `.env.example`).
+
+3. Clone this repo and pick your security level. Workshops run at `strict`:
 
    ```bash
-   cd demos/triage-board && npm install && npm start   # port 4000, forwarded automatically
+   git clone https://github.com/rvillaver/AI-Workshop-Course.git
+   cd AI-Workshop-Course
+   blitzpi level strict
    ```
+
+## Run a demo
+
+```bash
+# Foundations — drive the tool-call loop by hand
+bun demos/manual-agent-loop/agent_loop.mjs
+
+# Development track — the triage board
+cd demos/triage-board
+bun install
+bun run start        # http://localhost:4000
+bun test
+```
 
 ## What's here
 
 | Path | What it is |
 |---|---|
-| `demos/manual-agent-loop/` | "The human is the runtime" — a tool-call loop you drive by hand. All Node, no install. |
+| `demos/manual-agent-loop/` | "The human is the runtime": a tool-call loop you drive by hand. No install. |
 | `demos/triage-board/` | A small support-ticket app used by the Development track. Express + JSON storage, port 4000. |
-| `.devcontainer/` | Codespaces setup: Node 22 + Claude Code + Codex, your API key as a secret. |
 
-## Run it locally instead
+## Security levels
 
-Needs **Node 22+**. Put `OPENROUTER_API_KEY=sk-or-...` in a repo-root `.env` (see
-`.env.example`), then:
+BlitzPi runs every command through a sandbox and audits the decisions. `blitzpi level <tier>` sets the tier:
 
-```bash
-node demos/manual-agent-loop/agent_loop.mjs
-```
+| Level | What it does |
+|---|---|
+| `strict` | Asks before every package install. What workshops run. |
+| `guarded` | The product default. |
+| `monitored` | In-project writes and outside-project reads go quiet, still audited. |
 
-See [`demos/manual-agent-loop/README.md`](demos/manual-agent-loop/README.md) for the demo's
-two paths (interactive + the by-hand `wire/` walkthrough) and provider options.
+A known-malicious package is blocked and a write outside the project still prompts, at every level.

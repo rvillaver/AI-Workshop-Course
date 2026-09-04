@@ -2,9 +2,9 @@
 // Send a request payload file to the chat-completions endpoint. The payload is just
 // plain text (JSON) — open it in any editor. Saves the reply next to it as
 // <name>.response.json, pretty-printed so it's readable in an editor too.
-// Usage: node send.mjs wire/turn-1.json
-// Node built-ins only, no npm install. Reads the key from the environment (a
-// Codespace secret) or the repo-root .env, so it never appears on the command line.
+// Usage: bun send.mjs wire/turn-1.json
+// Runtime built-ins only, no install. Reads the key from the environment or the
+// repo-root .env, so it never appears on the command line.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -18,7 +18,7 @@ const BASE = (OX_BASE_URL || (OPENROUTER_API_KEY
 const TOKEN = OPENROUTER_API_KEY || OX_FREE_API_TOKEN;
 
 const req = process.argv[2];
-if (!req) { console.error('pass a request .json file, e.g. node send.mjs wire/turn-1.json'); process.exit(1); }
+if (!req) { console.error('pass a request .json file, e.g. bun send.mjs wire/turn-1.json'); process.exit(1); }
 const out = req.replace(/\.[^./]*$/, '') + '.response.json';
 
 let res;
