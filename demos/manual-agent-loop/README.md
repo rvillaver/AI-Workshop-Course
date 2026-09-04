@@ -1,49 +1,65 @@
-# Manual agentic loop — the human is the runtime
+# Wire-format agent loop — the loop is just JSON
 
-A workshop demo (deck §4 opener) that strips the magic off "AI agents." An agent
-framework is just a **loop**: the model *requests* tool calls, a runtime *executes*
-them and appends the results, and it repeats until the model stops asking and
-answers. Here **you** are the runtime — you run each tool by hand and paste the
-result back. The task is planning a family dish (chicken adobo).
+A workshop demo (deck §4 opener) that strips the magic off "AI agents." An agent is just a **loop**: the model *requests* tool calls, you *append the results*, resend the whole conversation, and repeat until the model stops asking and gives you an answer.
 
-## Setup — pick a provider (auto-detected from `.env`)
-**OpenRouter free (recommended — no cost):** get a free key at openrouter.ai/keys and put
-`OPENROUTER_API_KEY=sk-or-...` in the repo-root `.env`. Defaults to model
-`nvidia/nemotron-3-super-120b-a12b:free` (✔ verified: responsive, clean `tool_calls`).
-Alternatives via `OX_MODEL`: `nvidia/nemotron-3-ultra-550b-a55b:free`, `google/gemma-4-31b-it:free`.
-Note: `z-ai/glm-5.2:free` is often rate-limited (429) on the shared pool. Free tier ≈ 20 req/min, 50 req/day.
+See the loop as pure JSON — no abstractions, no scripts. Start with **turn-0** (no tools — "AI is enough") → then **turn-1 through turn-3** (watch the tool loop unfold).
 
-**Ox Alpha via Tokenra:** `OX_FREE_API_TOKEN=...` in `.env` (needs account quota, else 403).
+## Start here: turn-0 (no tools)
 
-The scripts use OpenRouter automatically when `OPENROUTER_API_KEY` is set, else Tokenra.
-For the curl path, set the `model` field in the `.request.json` to match your provider.
+```bash
+export OPENROUTER_API_KEY=sk-or-...  # from openrouter.ai/keys
+bun send.mjs wire/turn-0.json
+```
 
-## Two ways to run it
-**A. Interactive (recommended for stage):** `bun agent_loop.mjs`
-Prints the outgoing payload each turn (watch the `messages` array grow), shows the
-tool calls the model requests, and prompts you to type each tool result. Loops until
-the model returns a final answer with no tool calls. Runtime built-ins only, no install step.
+One API call. Model answers directly. **That's all "AI" needs to be useful.**
 
-**B. By hand with curl — you are the runtime:** see [`wire/`](wire/README.md).
-A series of `.json` files you POST in order — `bun send.mjs wire/turn-1.json`, then
-`turn-2.json`, then `turn-3.json`. Each carries the whole conversation so far **except one
-blank**: the newest tool result, which **you paste in** before sending. `result-1.json` /
-`result-2.json` are ready-made answers; `wire/model-sees.txt` shows the JSON flattened into
-the single text stream the model actually reads. The lesson: **the model asks for a tool,
-you paste the result and resend — the "agent" is only that loop.**
+## Then: turn-1 through turn-3 (with tools)
 
-## The four teaching beats
-1. The AI **requests** tools; it never runs them.
-2. The "agent" is a **while-loop** resending a growing transcript.
-3. `role:"tool"` results (tied by `tool_call_id`) are how the world talks back.
-4. **Termination is the model's call** (`stop`, no more `tool_calls`), not ours.
+```bash
+bun send.mjs wire/turn-1.json       # Model sees tools, asks for one
+# Output tells you which tool it wants
+bun send.mjs wire/turn-2.json       # Resend with the first result filled in
+bun send.mjs wire/turn-3.json       # Resend with the second result filled in
+# Model says "done"
+```
+
+See [`wire/README.md`](wire/README.md) for step-by-step walkthrough.
+
+## API provider
+
+**OpenRouter free (recommended):** Get a key at https://openrouter.ai/keys. Free, no card.
+```bash
+export OPENROUTER_API_KEY=sk-or-...
+```
+
+**Laguna free (optional):** If available, same key setup.
+```bash
+export LAGUNA_API_KEY=...
+```
+
+BlitzPi auto-detects which key you have set and uses it.
+
+## The lesson
+
+```
+Send turn-0 (one call, no tools) → Model answers
+Send turn-1 (same call + tools defined) → Model asks for a tool
+Fill the result → Send turn-2 → Model asks for another tool
+Fill the result → Send turn-3 → Model says "done"
+```
+
+That's the agent. The "loop" is just **model asks → you append result → resend → repeat**.
 
 ## Tools (toy, on purpose)
-`get_recipe(dish)` · `check_pantry(items[])` · `set_timer(minutes,label)` — trivial so
-attention stays on the loop, not the tools.
+
+`get_recipe(dish)` · `check_pantry(items[])` · `set_timer(minutes,label)` — trivial so attention stays on the loop structure, not the tool complexity.
 
 ## Status
-✔ **Ran live end-to-end** on OpenRouter free (`nvidia/nemotron-3-super-120b-a12b:free`)
-2026-08-24, both paths — the `wire/` curl walkthrough (turn 1 → `get_recipe`, turn 2 →
-`check_pantry`, turn 3 → final plan, `finish_reason: stop`) and the interactive script.
-Evidence: `SAMPLE-RUN.md`. Needs a valid free `OPENROUTER_API_KEY` in the repo `.env`.
+
+✔ **Verified live 2026-08-24** on OpenRouter free (`nvidia/nemotron-3-super-120b-a12b:free`):
+- turn-0: Direct answer ✔
+- turn-1 → turn-2: `get_recipe` tool call ✔  
+- turn-2 → turn-3: `check_pantry` tool call ✔
+- turn-3: Final answer, model stops asking ✔
+
+Evidence: `SAMPLE-RUN.md` (old). New wire/ walkthrough: see `wire/README.md`.
