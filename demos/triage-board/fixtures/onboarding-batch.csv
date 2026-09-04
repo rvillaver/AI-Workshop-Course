@@ -1,0 +1,6 @@
+title,tag,severity
+Card declined during trial upgrade,Billing,high
+SSO metadata rejected by IdP,Auth,urgent
+Weekly digest never arrives,Reports,normal
+Docs link 404s from in-app help,Docs,low
+Seat count wrong after downgrade,Billing,high

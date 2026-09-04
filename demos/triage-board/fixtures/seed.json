@@ -1,0 +1,10 @@
+[
+  { "id": 1, "title": "Card declined on renewal", "tag": "billing", "severity": "high", "status": "open", "createdAt": "2026-08-02T09:14:00.000Z" },
+  { "id": 2, "title": "SSO redirect loops on Safari", "tag": "auth", "severity": "urgent", "status": "open", "createdAt": "2026-08-02T11:40:00.000Z" },
+  { "id": 3, "title": "Export CSV missing last column", "tag": "reports", "severity": "normal", "status": "open", "createdAt": "2026-08-03T08:05:00.000Z" },
+  { "id": 4, "title": "Invoice PDF shows wrong VAT", "tag": "billing", "severity": "high", "status": "open", "createdAt": "2026-08-03T14:22:00.000Z" },
+  { "id": 5, "title": "Password reset email delayed", "tag": "auth", "severity": "normal", "status": "open", "createdAt": "2026-08-04T10:11:00.000Z" },
+  { "id": 6, "title": "Dashboard totals off by a day", "tag": "reports", "severity": "low", "status": "open", "createdAt": "2026-08-04T16:48:00.000Z" },
+  { "id": 7, "title": "Refund stuck in pending", "tag": "billing", "severity": "urgent", "status": "closed", "createdAt": "2026-07-28T13:02:00.000Z" },
+  { "id": 8, "title": "API key rotation docs unclear", "tag": "docs", "severity": "low", "status": "open", "createdAt": "2026-08-05T09:30:00.000Z" }
+]

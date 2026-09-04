@@ -1,0 +1,72 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Triage Board</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 2rem auto; max-width: 46rem; color: #1a1a1a; }
+  h1 { font-size: 1.4rem; }
+  .bar { display: flex; gap: .5rem; margin: 1rem 0; }
+  input, select, button { font: inherit; padding: .4rem .6rem; }
+  input[type=text] { flex: 1; }
+  li { padding: .5rem 0; border-bottom: 1px solid #e5e5e5; list-style: none; }
+  .tag { background: #eef; padding: .1rem .4rem; border-radius: 3px; font-size: .85em; }
+  .sev { color: #666; font-size: .85em; }
+  ul { padding: 0; }
+  .empty { color: #888; padding: 1rem 0; }
+</style>
+
+<h1>Triage Board</h1>
+
+<div class="bar">
+  <input type="text" id="filter" placeholder="Filter by tag (e.g. billing)" />
+  <button id="apply">Filter</button>
+  <button id="clear">Clear</button>
+</div>
+
+<form class="bar" id="add">
+  <input type="text" id="title" placeholder="New ticket title" required />
+  <input type="text" id="tag" placeholder="tag" required style="flex:0 0 8rem" />
+  <select id="severity">
+    <option>low</option><option selected>normal</option><option>high</option><option>urgent</option>
+  </select>
+  <button>Add</button>
+</form>
+
+<ul id="list"></ul>
+
+<script>
+  const list = document.getElementById('list');
+  const filter = document.getElementById('filter');
+
+  // Ticket text is user-supplied, so it is escaped before it reaches innerHTML.
+  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+
+  async function refresh() {
+    const q = filter.value.trim();
+    const res = await fetch('/api/tickets' + (q ? '?tag=' + encodeURIComponent(q) : ''));
+    const rows = await res.json();
+    list.innerHTML = rows.length
+      ? rows.map((r) => `<li><strong>${esc(r.title)}</strong> <span class="tag">${esc(r.tag)}</span> <span class="sev">${esc(r.severity)}</span></li>`).join('')
+      : '<li class="empty">No tickets match.</li>';
+  }
+
+  document.getElementById('apply').onclick = refresh;
+  document.getElementById('clear').onclick = () => { filter.value = ''; refresh(); };
+  document.getElementById('add').onsubmit = async (e) => {
+    e.preventDefault();
+    await fetch('/api/tickets', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        title: document.getElementById('title').value,
+        tag: document.getElementById('tag').value,
+        severity: document.getElementById('severity').value,
+      }),
+    });
+    e.target.reset();
+    refresh();
+  };
+
+  refresh();
+</script>

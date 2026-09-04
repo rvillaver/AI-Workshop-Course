@@ -20,11 +20,18 @@ and drive commands with no local setup.
    node demos/manual-agent-loop/agent_loop.mjs
    ```
 
+   Or start the triage board used by the Development track:
+
+   ```bash
+   cd demos/triage-board && npm install && npm start   # port 4000, forwarded automatically
+   ```
+
 ## What's here
 
 | Path | What it is |
 |---|---|
 | `demos/manual-agent-loop/` | "The human is the runtime" — a tool-call loop you drive by hand. All Node, no install. |
+| `demos/triage-board/` | A small support-ticket app used by the Development track. Express + JSON storage, port 4000. |
 | `.devcontainer/` | Codespaces setup: Node 22 + Claude Code + Codex, your API key as a secret. |
 
 ## Run it locally instead

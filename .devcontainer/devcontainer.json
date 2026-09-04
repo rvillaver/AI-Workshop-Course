@@ -1,6 +1,10 @@
 {
   "name": "AI Workshop — demos & dev environment",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "forwardPorts": [4000],
+  "portsAttributes": {
+    "4000": { "label": "Triage Board", "onAutoForward": "notify" }
+  },
   "postCreateCommand": "bash .devcontainer/setup.sh",
   "secrets": {
     "OPENROUTER_API_KEY": {
