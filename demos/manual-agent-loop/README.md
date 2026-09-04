@@ -6,11 +6,6 @@ See the loop as pure JSON — no abstractions, no scripts. Start with **turn-0**
 
 ## Start here: turn-0 (no tools)
 
-> **Note:** BlitzPi ships its own Bun but does not add it to your shell PATH. Either add it once
-> (`export PATH="$HOME/Library/Application Support/BlitzPi/bun/bin:$PATH"` on macOS,
-> `$HOME/.local/share/blitzpi/bun/bin` on Linux), or run these inside a `blitzpi` session so the
-> sandbox applies.
-
 ```bash
 export OPENROUTER_API_KEY=sk-or-...  # from openrouter.ai/keys
 bun send.mjs wire/turn-0.json

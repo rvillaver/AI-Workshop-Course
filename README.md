@@ -28,14 +28,6 @@ sandboxes the shell, so there is no cloud environment to wait on and nothing els
 
 ## Run a demo
 
-BlitzPi ships its own Bun and does **not** put it on your shell PATH, because commands the agent
-runs go through its sandbox. For the demos you drive by hand, add it once:
-
-```bash
-export PATH="$HOME/Library/Application Support/BlitzPi/bun/bin:$PATH"   # macOS
-export PATH="$HOME/.local/share/blitzpi/bun/bin:$PATH"                  # Linux
-```
-
 ```bash
 # Foundations: drive the tool-call loop by hand
 bun demos/manual-agent-loop/agent_loop.mjs
@@ -47,8 +39,8 @@ bun run start        # http://localhost:4000
 bun test
 ```
 
-Or start `blitzpi` in the repo and ask it to run them, in which case the sandbox, the OSV package
-checks, and the audit trail all apply.
+Or start `blitzpi` in the repo and ask it to run them, so the sandbox, the OSV package checks, and
+the audit trail apply to every command.
 
 ## What's here
 
